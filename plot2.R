@@ -5,14 +5,13 @@ output_filename <- "plot2.png"
 file <- paste(getwd(), "household_power_consumption.txt", sep = "\\")
 
 ## reading file
-raw_set <- read.csv2(file, na.strings = c("?"),dec = ".")
-
-## filtering by particular dates
-raw_set <- raw_set[raw_set$Date == "1/2/2007" | raw_set$Date == "2/2/2007", ]
+file_handler <- file(description = file, open = "r");
+raw_set <- read.table(text = grep("^[1,2]/2/2007", readLines(file_handler), value=TRUE), na.strings = c("?"),dec = ".",sep = ";", header = TRUE)
 
 ## selecting only the column which is needed to show in histogram
 ## and conveting factor/string columns to date-time
 raw_set <- raw_set[, column_indexes]
+colnames(raw_set) <- c("Date", "Time", "GAP")
 raw_set$Date <- strptime(paste(raw_set[, 1], raw_set[, 2]), "%d/%m/%Y %H:%M:%S")
 
 ## deleting time column
@@ -29,3 +28,4 @@ png(filename = output_filename, width = 480, height = 480)
 plot(raw_set, main = "", xlab="", ylab="Global Active Power (kilowatts)", type = "l")
 
 dev.off()
+close(file_handler)

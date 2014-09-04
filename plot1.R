@@ -5,10 +5,9 @@ output_filename <- "plot1.png"
 file <- paste(getwd(), "household_power_consumption.txt", sep = "\\")
 
 ## reading file
-raw_set <- read.csv2(file, na.strings = c("?"),dec = ".")
+file_handler <- file(description = file, open = "r");
+raw_set <- read.table(text = grep("^[1,2]/2/2007", readLines(file_handler), value=TRUE), na.strings = c("?"),dec = ".",sep = ";", header = TRUE)
 
-## filtering by particular dates
-raw_set <- raw_set[raw_set$Date == "1/2/2007" | raw_set$Date == "2/2/2007", ]
 
 ## selecting only the column which is needed to show in histogram
 raw_set <- as.numeric(raw_set[, y_column_index])
@@ -27,3 +26,4 @@ hist(raw_set, col = "red", breaks = 12,
      ylab="Frequency")
 
 dev.off()
+close(file_handler)
